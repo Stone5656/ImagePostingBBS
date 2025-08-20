@@ -1,10 +1,10 @@
+# ImagePostingBBS
+
 <p align="center">
   <a href="https://github.com/Stone5656/ImagePostingBBS/blob/main/LICENSE">
     <img src="https://img.shields.io/badge/License-MIT-informational?style=for-the-badge" alt="License: MIT">
   </a>
 </p>
-
-# ImagePostingBBS
 
 PHP + Nginx を Docker で動かす、**画像投稿が可能な掲示板**です。  
 （Stack: PHP / Nginx / Docker Compose）
