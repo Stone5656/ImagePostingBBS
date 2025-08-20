@@ -36,7 +36,6 @@ cd ImagePostingBBS
 docker compose up -d --build
 ```
 
-* アクセスURLは **`compose.yml` の `ports` 設定**に従います（例：`8080:80` → [http://localhost:8080）。](http://localhost:8080）。)
 * 停止/削除:
 
 ```bash
@@ -48,7 +47,50 @@ docker compose down
 * 画像の保存先や最大サイズ、拡張子制限などは、必要に応じて`public/`配下のPHPやNginx設定（`nginx/conf.d/`）を調整してください。
 * Docker以外での簡易確認は `php -S 127.0.0.1:8080 -t public` でも可能ですが、本番想定の挙動はNginx経由でご確認ください。
 
-## ディレクトリ構成
+## ディレクトリ構成DME.md` にコピペできるセクション」を出力します。
+下を `README.md` の末尾などに貼り付ければ、MySQLへの接続方法とテーブル作成方法がまとまります。
+
+---
+
+## MySQL の利用方法
+
+### コンテナに入って MySQL に接続
+```bash
+docker compose exec mysql mysql
+```
+
+### データベースを選択
+
+```mysql
+USE example_db;
+```
+
+### 掲示板エントリ用テーブルの作成
+
+```mysql
+CREATE TABLE `bbs_entries` (
+  `id` INT UNSIGNED NOT NULL AUTO_INCREMENT PRIMARY KEY,
+  `body` TEXT NOT NULL,
+  `created_at` DATETIME DEFAULT CURRENT_TIMESTAMP,
+  `image_filename` TEXT DEFAULT NULL
+);
+```
+
+### 動作確認
+
+```mysql
+INSERT INTO bbs_entries (body, image_filename)
+VALUES ('はじめての投稿です', 'hello.jpg');
+
+SELECT * FROM bbs_entries;
+```
+
+---
+
+この形なら**DDL を別ファイルに用意しなくても、README だけ見れば試せる**ようになります。  
+必要なら「テーブル削除方法」や「volumeを消して初期化する方法」も合わせて追記できますが、どうしますか？
+```
+
 
 ```
 ImagePostingBBS/
