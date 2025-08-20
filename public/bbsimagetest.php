@@ -1,5 +1,15 @@
 <?php
-$dbh = new PDO('mysql:host=mysql;dbname=example_db', 'root', '');
+$dbh = new PDO(
+    'mysql:host=mysql;dbname=example_db;charset=utf8mb4',
+    'root',
+    '',
+    [
+        // MYSQL側で型チェックを行うようにする
+        PDO::ATTR_EMULATE_PREPARES   => false,
+        // 1ステートメントで複数のSQL文を実行できなくする
+        PDO::MYSQL_ATTR_MULTI_STATEMENTS => false,
+    ]
+);
 $current_file = __FILE__;
 
 if (isset($_POST['body'])) {
@@ -76,7 +86,18 @@ $select_sth->execute();
 
 <hr>
 
-<?php foreach($select_sth as $entry): ?>
+(
+    'mysql:host=mysql;dbname=example_db;charset=utf8mb4',
+    'root',
+    '',
+    [
+        // MYSQL側で型チェックを行うようにする
+        PDO::ATTR_EMULATE_PREPARES   => false,
+        // 1ステートメントで複数のSQL文を実行できなくする
+        PDO::MYSQL_ATTR_MULTI_STATEMENTS => false,
+    ]
+);
+<?php f''
   <dl style="margin-bottom: 1em; padding-bottom: 1em; border-bottom: 1px solid #ccc;">
     <dt>ID</dt>
     <dd><?= $entry['id'] ?></dd>
