@@ -1,4 +1,4 @@
-lign="center">
+<p align="center">
   <a href="https://github.com/Stone5656/ImagePostingBBS/blob/main/LICENSE">
     <img src="https://img.shields.io/badge/License-MIT-informational?style=for-the-badge" alt="License: MIT">
   </a>
