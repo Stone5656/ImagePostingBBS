@@ -1,5 +1,6 @@
 <?php
 $dbh = new PDO('mysql:host=mysql;dbname=example_db', 'root', '');
+$current_file = __FILE__;
 
 if (isset($_POST['body'])) {
   // POSTで送られてくるフォームパラメータ body がある場合
@@ -9,7 +10,7 @@ if (isset($_POST['body'])) {
     // アップロードされた画像がある場合
     if (preg_match('/^image\/[a-z0-9]+$/', mime_content_type($_FILES['image']['tmp_name']))) {
       header("HTTP/1.1 302 Found");
-      header("Location: ./bbsimagetest.php");
+      header("Location: $current_file");
     }
 
     // 元のファイル名から拡張子を取得
@@ -31,7 +32,7 @@ if (isset($_POST['body'])) {
   // 処理が終わったらリダイレクトする
   // リダイレクトしないと，リロード時にまた同じ内容でPOSTすることになる
   header("HTTP/1.1 302 Found");
-  header("Location: ./bbsimagetest.php");
+  header("Location: $current_file");
   return;
 }
 
@@ -45,7 +46,7 @@ $select_sth->execute();
 </head>
 
 <!-- フォームのPOST先はこのファイル自身にする -->
-<form method="POST" action="./bbsimagetest.php" enctype="multipart/form-data">
+<form method="POST" action="<?= htmlspecialchars($current_file) ?>" enctype="multipart/form-data">
   <textarea name="body" required></textarea>
   <div style="margin: 1em 0;">
     <input type="file" id="imageInput" accept="image/*" name="image">
