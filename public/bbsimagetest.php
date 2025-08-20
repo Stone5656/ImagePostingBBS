@@ -63,20 +63,55 @@ $select_sth->execute();
     <script>
     document.addEventListener('DOMContentLoaded', () => {
       const imageInput = document.getElementById('imageInput');
-      const MAX_SIZE_MB = 5;
-
-      imageInput.addEventListener('change', function (){
+      const MAX_SIZE = 5 * 1024 * 1024; // 5MB
+      const MAX_WIDTH = 1920;           // 必要に応じて調整
+      const MIN_QUALITY = 0.4;          // 下げ止め
+    
+      imageInput.addEventListener('change', async function () {
         const file = this.files[0];
-
         if (!file) return;
+    
+        // 5MB以下ならそのまま
+        if (file.size <= MAX_SIZE) return;
+    
+        // <img> を作って読み込み（オブジェクトURLは後で解放）
+        const url = URL.createObjectURL(file);        // ← createObjectURL
+        const img = new Image();
+        img.src = url;
+        await img.decode();
+    
+        // キャンバスにリサイズ描画
+        const scale = Math.min(1, MAX_WIDTH / img.width);
+        const canvas = document.createElement('canvas');
+        canvas.width = Math.max(1, Math.round(img.width * scale));
+        canvas.height = Math.max(1, Math.round(img.height * scale));
+        const ctx = canvas.getContext('2d', { alpha: false });
+        ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
+    
+        // 使い終わったURLは解放（メモリリーク防止）
+        URL.revokeObjectURL(url);                     // ← revokeObjectURL
+        // 画質を段階的に下げて 5MB 未満になるまで再エンコード
+        let q = 0.8;
+        let blob = await new Promise(res => canvas.toBlob(res, 'image/jpeg', q));
+        while (blob && blob.size > MAX_SIZE && q > MIN_QUALITY) {
+          q = Math.max(MIN_QUALITY, q - 0.1);
+          blob = await new Promise(res => canvas.toBlob(res, 'image/jpeg', q));
+        }
+    
+        if (!blob || blob.size > MAX_SIZE) {
+          alert('画像の自動圧縮に失敗しました。別の画像を選択してください。');
+          this.value = '';
+          return;
+        }
+    
+        const newName = file.name.replace(/\.[^.]+$/, '') + '.jpg';
+        const newFile = new File([blob], newName, { type: 'image/jpeg' });
+    
+        const dt = new DataTransfer();
+        dt.items.add(newFile);
+        this.files = dt.files;
 
-         const fileSizeMB = file.size / (1024 * 1024);
-
-         if (fileSizeMB > MAX_SIZE_MB) {
-            // toFixed(2)で小数点第二までMBを表示
-            alert(`選択された画像は${fileSizeMB.toFixed(2)}MBで、上限${MAX_SIZE_MB}MBを超えています。`);
-            this.value = '';
-         }
+        alert(`画像をJPEGにして自動圧縮しました (${(newFile.size/1024/1024).toFixed(2)}MB)`);
       });
      });
     </script>
@@ -86,18 +121,7 @@ $select_sth->execute();
 
 <hr>
 
-(
-    'mysql:host=mysql;dbname=example_db;charset=utf8mb4',
-    'root',
-    '',
-    [
-        // MYSQL側で型チェックを行うようにする
-        PDO::ATTR_EMULATE_PREPARES   => false,
-        // 1ステートメントで複数のSQL文を実行できなくする
-        PDO::MYSQL_ATTR_MULTI_STATEMENTS => false,
-    ]
-);
-<?php f''
+<?php foreach($select_sth as $entry): ?>
   <dl style="margin-bottom: 1em; padding-bottom: 1em; border-bottom: 1px solid #ccc;">
     <dt>ID</dt>
     <dd><?= $entry['id'] ?></dd>
