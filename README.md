@@ -36,24 +36,6 @@ cd ImagePostingBBS
 docker compose up -d --build
 ```
 
-* 停止/削除:
-
-```bash
-docker compose down
-```
-
-## 開発メモ
-
-* 画像の保存先や最大サイズ、拡張子制限などは、必要に応じて`public/`配下のPHPやNginx設定（`nginx/conf.d/`）を調整してください。
-* Docker以外での簡易確認は `php -S 127.0.0.1:8080 -t public` でも可能ですが、本番想定の挙動はNginx経由でご確認ください。
-
-## ディレクトリ構成DME.md` にコピペできるセクション」を出力します。
-下を `README.md` の末尾などに貼り付ければ、MySQLへの接続方法とテーブル作成方法がまとまります。
-
----
-
-## MySQL の利用方法
-
 ### コンテナに入って MySQL に接続
 ```bash
 docker compose exec mysql mysql
@@ -85,13 +67,17 @@ VALUES ('はじめての投稿です', 'hello.jpg');
 SELECT * FROM bbs_entries;
 ```
 
----
+* 停止/削除:
 
-この形なら**DDL を別ファイルに用意しなくても、README だけ見れば試せる**ようになります。  
-必要なら「テーブル削除方法」や「volumeを消して初期化する方法」も合わせて追記できますが、どうしますか？
+```bash
+docker compose down
 ```
 
+## 開発メモ
+* 画像の保存先や最大サイズ、拡張子制限などは、必要に応じて`public/`配下のPHPやNginx設定（`nginx/conf.d/`）を調整してください。
+* Docker以外での簡易確認は `php -S 127.0.0.1:8080 -t public` でも可能ですが、本番想定の挙動はNginx経由でご確認ください。
 
+## ディレクトリ構成
 ```
 ImagePostingBBS/
 ├─ public/          # アプリ本体（エントリポイントや投稿処理）
