@@ -10,7 +10,10 @@ $dbh = new PDO(
         PDO::MYSQL_ATTR_MULTI_STATEMENTS => false,
     ]
 );
-$current_file = __FILE__;
+// URL用の「現在ページ」
+// PHP_SELF はドキュメントルートからの相対URL（例: /bbsimagetest.php）
+$current_url = $_SERVER['PHP_SELF'];  // ← URLパスを使う
+// $current_file = __FILE__; // ← これは「ファイルパス」なのでNG
 
 if (isset($_POST['body'])) {
   // POSTで送られてくるフォームパラメータ body がある場合
